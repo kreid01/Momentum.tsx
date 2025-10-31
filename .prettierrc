@@ -1,13 +1,9 @@
 {
-  "printWidth": 120,
+  "printWidth": 100,
   "tabWidth": 2,
-  "useTabs": false,
-  "semi": true,
   "singleQuote": true,
-  "trailingComma": "all",
-  "no-return-assign": false,
-  "array-element-newline": false,
-  "object-curly-newline": false,
-  "bracketSameLine": false,
-  "arrowParens": "avoid"
+  "bracketSameLine": true,
+  "trailingComma": "es5",
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "tailwindFunctions": ["cva"]
 }

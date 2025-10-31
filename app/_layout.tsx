@@ -1,60 +1,84 @@
-import { useEffect } from 'react';
-import { Stack } from 'expo-router';
-import { useFonts } from 'expo-font';
-import { useColorScheme } from 'nativewind';
-import * as SplashScreen from 'expo-splash-screen';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import 'react-native-reanimated';
+import '@/global.css';
 
-import '../global.css';
+import { NAV_THEME } from '@/lib/theme';
+import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
+import { tokenCache } from '@clerk/clerk-expo/token-cache';
+import { ThemeProvider } from '@react-navigation/native';
+import { PortalHost } from '@rn-primitives/portal';
+import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
+import { StatusBar } from 'expo-status-bar';
+import { useColorScheme } from 'nativewind';
+import * as React from 'react';
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
-export const unstable_settings = {
-  // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
-};
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
-  });
-
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
   const { colorScheme } = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <ClerkProvider tokenCache={tokenCache}>
+      <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+        <Routes />
+        <PortalHost />
+      </ThemeProvider>
+    </ClerkProvider>
   );
 }
+
+SplashScreen.preventAutoHideAsync();
+
+function Routes() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  React.useEffect(() => {
+    if (isLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [isLoaded]);
+
+  if (!isLoaded) {
+    return null;
+  }
+
+  return (
+    <Stack>
+      {/* Screens only shown when the user is NOT signed in */}
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name="(auth)/sign-in" options={SIGN_IN_SCREEN_OPTIONS} />
+        <Stack.Screen name="(auth)/sign-up" options={SIGN_UP_SCREEN_OPTIONS} />
+        <Stack.Screen name="(auth)/reset-password" options={DEFAULT_AUTH_SCREEN_OPTIONS} />
+        <Stack.Screen name="(auth)/forgot-password" options={DEFAULT_AUTH_SCREEN_OPTIONS} />
+      </Stack.Protected>
+
+      {/* Screens only shown when the user IS signed in */}
+      <Stack.Protected guard={isSignedIn}>
+        <Stack.Screen name="index" />
+      </Stack.Protected>
+
+      {/* Screens outside the guards are accessible to everyone (e.g. not found) */}
+    </Stack>
+  );
+}
+
+const SIGN_IN_SCREEN_OPTIONS = {
+  headerShown: false,
+  title: 'Sign in',
+};
+
+const SIGN_UP_SCREEN_OPTIONS = {
+  presentation: 'modal',
+  title: '',
+  headerTransparent: true,
+  gestureEnabled: false,
+} as const;
+
+const DEFAULT_AUTH_SCREEN_OPTIONS = {
+  title: '',
+  headerShadowVisible: false,
+  headerTransparent: true,
+};

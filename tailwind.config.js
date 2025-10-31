@@ -1,62 +1,54 @@
+const { hairlineWidth } = require('nativewind/theme');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    './app/**/*.{js,jsx,ts,tsx}',
-    './components/**/*.{js,jsx,ts,tsx}',
-    './screens/**/*.{js,jsx,ts,tsx}',
-    './Navigation.{js,jsx,ts,tsx}',
-  ],
-  plugins: [],
+  darkMode: 'class',
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   presets: [require('nativewind/preset')],
   theme: {
     extend: {
-      animation: {},
-      borderRadius: {
-        lg: '0.5rem',
-        md: 'calc(0.5rem - 2px)',
-        sm: 'calc(0.5rem - 4px)',
-      },
       colors: {
-        accent: {
-          DEFAULT: '#eaffff',
-          foreground: '#1a1a1a',
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
-        background: '#0d1c11',
-        border: '#1a332a',
-        card: {
-          DEFAULT: '#102314',
-          foreground: '#e4f3f4',
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
         destructive: {
-          DEFAULT: '#26a879',
-          foreground: '#ffffff',
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
-        foreground: '#a9ffea',
-        input: '#243f34',
         muted: {
-          DEFAULT: '#1a1e19',
-          foreground: '#b3b3c0',
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
         popover: {
-          DEFAULT: '#1c1e19',
-          foreground: '#e4f3f4',
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
-        primary: {
-          DEFAULT: '#62dfa0',
-          foreground: '#ffffff',
-        },
-        ring: '#274b36',
-        secondary: {
-          DEFAULT: '#1cd7a2',
-          foreground: '#ffffff',
+        card: {
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
         },
       },
-      filter: {
-        dropShadowDark: 'drop-shadow(0 1px 1px rgb(255 255 255 / 1))',
-        dropShadowLight: 'drop-shadow(0 1px 1px rgb(0 0 0 / 1))',
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
-      fontFamily: {
-        mono: ['SpaceMono'],
+      borderWidth: {
+        hairline: hairlineWidth(),
       },
       keyframes: {
         'accordion-down': {
@@ -68,6 +60,14 @@ module.exports = {
           to: { height: '0' },
         },
       },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
     },
   },
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+  plugins: [require('tailwindcss-animate')],
 };
