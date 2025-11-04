@@ -5,27 +5,29 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { tokenCache } from '@clerk/clerk-expo/token-cache';
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
+import { ConvexProvider, ConvexReactClient } from 'convex/react';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'nativewind';
 import * as React from 'react';
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from 'expo-router';
+export { ErrorBoundary, } from 'expo-router';
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
+  const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
+    unsavedChangesWarning: false,
+  });
 
   return (
     <ClerkProvider tokenCache={tokenCache}>
-      <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
-        <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-        <Routes />
-        <PortalHost />
-      </ThemeProvider>
+      <ConvexProvider client={convex}>
+        <ThemeProvider value={NAV_THEME[colorScheme ?? 'light']}>
+          <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+          <Routes />
+          <PortalHost />
+        </ThemeProvider>
+      </ConvexProvider>
     </ClerkProvider>
   );
 }
@@ -47,7 +49,6 @@ function Routes() {
 
   return (
     <Stack>
-      {/* Screens only shown when the user is NOT signed in */}
       <Stack.Protected guard={!isSignedIn}>
         <Stack.Screen name="(auth)/sign-in" options={SIGN_IN_SCREEN_OPTIONS} />
         <Stack.Screen name="(auth)/sign-up" options={SIGN_UP_SCREEN_OPTIONS} />
@@ -55,12 +56,10 @@ function Routes() {
         <Stack.Screen name="(auth)/forgot-password" options={DEFAULT_AUTH_SCREEN_OPTIONS} />
       </Stack.Protected>
 
-      {/* Screens only shown when the user IS signed in */}
       <Stack.Protected guard={isSignedIn}>
         <Stack.Screen name="index" />
+        <Stack.Screen name="node/[nodeId]" options={{ title: 'Node Details' }} />
       </Stack.Protected>
-
-      {/* Screens outside the guards are accessible to everyone (e.g. not found) */}
     </Stack>
   );
 }

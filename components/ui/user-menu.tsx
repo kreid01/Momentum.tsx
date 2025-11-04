@@ -22,8 +22,7 @@ export function UserMenu() {
   return (
     <Popover>
       <PopoverTrigger asChild ref={popoverTriggerRef}>
-        <Button variant="ghost" size="icon" className="size-8 rounded-full">
-          <UserAvatar />
+        <Button variant="ghost" size="icon" className="size-4 rounded-full">
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" side="bottom" className="w-80 p-0">
