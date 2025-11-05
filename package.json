@@ -30,6 +30,7 @@
     "@rn-primitives/separator": "^1.2.0",
     "@rn-primitives/slot": "^1.2.0",
     "@rn-primitives/toggle": "^1.2.0",
+    "@rn-primitives/toggle-group": "^1.2.0",
     "@rn-primitives/types": "^1.2.0",
     "bun": "^1.3.1",
     "class-variance-authority": "^0.7.1",

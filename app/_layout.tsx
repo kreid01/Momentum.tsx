@@ -58,7 +58,7 @@ function Routes() {
 
       <Stack.Protected guard={isSignedIn}>
         <Stack.Screen name="index" />
-        <Stack.Screen name="node/[nodeId]" options={{ title: 'Node Details' }} />
+        <Stack.Screen name="node/[nodeId]" />
       </Stack.Protected>
     </Stack>
   );
